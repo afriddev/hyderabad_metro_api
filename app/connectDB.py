@@ -1,13 +1,9 @@
-from dotenv import load_dotenv
-import os
-
-load_dotenv()
 
 
-from databases import Database
 
 
-DATABASE_URL = f"{os.getenv("data_base_url")}"
+
+DATABASE_URL = f"postgresql://postgres:uRmfHyMnriybWWuxSRHNBjDQbZsJmhUP@autorack.proxy.rlwy.net:55875/railway"
 
 database = Database(
     DATABASE_URL)
