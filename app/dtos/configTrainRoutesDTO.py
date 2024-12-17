@@ -2,9 +2,11 @@ from pydantic import BaseModel
 from app.models.stationModel import StationModel
 
 
-class addTrainDTO(BaseModel):
+
+class addTrainRoute(BaseModel):
     lineNo: int
-    fromStation: str
-    toStation: str
+    fromStation: list[str]
+    toStation: list[str]
     noOfStations: int
     stationsDetails: list[StationModel]
+

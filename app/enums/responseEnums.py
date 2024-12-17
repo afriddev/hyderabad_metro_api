@@ -1,0 +1,8 @@
+from enum import Enum
+
+class responseENUMS(Enum):
+    INTERNAL_ERROR = 'INTERNAL_SERVER_ERROR'
+    SUCCESS = "SUCCESS"
+    ERROR = "ERROR"
+    INVALID_PAYLOAD = "INVALID_PAYLOAD"
+    NO_DATA = "NO_DATA"

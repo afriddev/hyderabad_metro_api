@@ -12,3 +12,6 @@ class Custom404Middleware(BaseHTTPMiddleware):
                 content={"message": "Wrong URL, please check the route and try again."},
             )
         return response
+
+
+#python -B -m uvicorn app.main:app --reload
