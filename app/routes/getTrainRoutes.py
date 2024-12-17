@@ -274,14 +274,9 @@ async def getRouteDetails(request: getStationsDTO):
             return JSONResponse(status_code=200, content={"message": responseENUMS.NO_DATA.value})
 
     except Exception as e:
-        raise (e)
         return JSONResponse(
             status_code=400,
             content={
-                "message": responseENUMS.INTERNAL_ERROR.value
+                "message":e
             }
         )
-
-
-# {str(fromStation["stationNo"])},{str(Interchange[0]["fromStation"]["stationNo"])}
-# {str(fromStation["stationNo"])}, {str(Interchange[0]["fromStation"]["stationNo"])}
