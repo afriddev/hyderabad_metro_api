@@ -33,7 +33,6 @@ pydantic-settings==2.6.1
 pydantic_core==2.27.1
 Pygments==2.18.0
 python-dotenv==1.0.1
-
 python-multipart==0.0.19
 PyYAML==6.0.2
 requests==2.32.3
@@ -54,5 +53,4 @@ urllib3==2.2.3
 uvicorn==0.32.1
 venusian==3.1.1
 watchfiles==1.0.3
-websockets==14.
-
+websockets==14
