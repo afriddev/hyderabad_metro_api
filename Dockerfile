@@ -1,4 +1,4 @@
-# Use Python 3.11 (or 3.10 if you're not using features requiring 3.11+)
+# Use Python 3.11 (or your desired version)
 FROM python:3.11
 
 # Set the working directory inside the container
@@ -8,11 +8,11 @@ WORKDIR /app
 COPY requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 
-# Copy the app code from 'all' directory to the container
-COPY all/ /app/all/
+# Copy all content from the 'app' folder to the container's '/app' folder
+COPY app/ /app/
 
-# Expose the port that FastAPI will run on
+# Expose the port FastAPI will run on
 EXPOSE 8000
 
-# Run FastAPI with Uvicorn (main.py is located at the root)
+# Run FastAPI with Uvicorn (main.py is at the root of your project)
 CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8000"]
