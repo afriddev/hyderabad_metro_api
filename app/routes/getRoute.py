@@ -1,10 +1,10 @@
 from fastapi import APIRouter
-from app.dtos.getTrainRoutesDTO import getStationsDTO
+from app.dtos.getRouteDTO import getStationsDTO
 from fastapi.responses import JSONResponse
 from app.enums.responseEnums import responseENUMS
 from app.connectDB import database
 import json
-from app.querys import all_station_details_query, from_station_details_query, to_station_details_query, from_line_inter_change_station_query, to_line_inter_change_station_query, station_between_same_line_query, stations_with_same_name
+from app.querys import all_station_details_query, from_station_details_query, to_station_details_query, from_line_inter_change_station_query, to_line_inter_change_station_query, station_between_same_line_query, stations_with_same_name,get_station_fares_query
 from app.models.stationModel import StationModel
 from asyncio import gather
 
@@ -23,6 +23,9 @@ async def getRouteDetails(request: getStationsDTO):
 
     fromStation = None
     toStation = None
+    
+    
+    
 
     if (request.fromStation.stationName == request.toStation.stationName):
         return JSONResponse(status_code=401, content={"message": responseENUMS.INVALID_PAYLOAD.value})
@@ -77,8 +80,25 @@ async def getRouteDetails(request: getStationsDTO):
             values["toStationLineNo"] = str(toStation["lineNo"])
         else:
             return JSONResponse(status_code=401, content={"message": responseENUMS.INVALID_PAYLOAD.value})
+        
 
         if (fromStation and toStation):
+            fareDetailsResult = await database.fetch_all(get_station_fares_query)
+            
+            stationFareDetails = None
+            fare = None
+            try:
+                for record in fareDetailsResult:
+                    if(fromStation["stationName"][0] == record["stationName"]):
+                        stationFareDetails = json.loads(record["fares"])
+                index = 0
+                for record in fareDetailsResult:
+                    if(toStation["stationName"][0] == record["stationName"]):
+                        fare = stationFareDetails[index]
+                    index+=1 
+            except Exception as e:
+                print(e)
+            
 
             if (fromStation["lineNo"] == toStation["lineNo"]):
                 stationsResult = await database.fetch_all(f"""{base_query},{from_station_details_query},{to_station_details_query},{station_between_same_line_query} SELECT * FROM stationsBetweenSameLine,fromStationDetail,toStationDetail  ORDER BY CASE WHEN ("fromStationDetail"->'stationNo')::int > ("toStationDetail"->'stationNo')::int THEN ("stationDetails"->'stationNo')::int * -1  ELSE  ("stationDetails"->'stationNo')::int END; """, values=values)
@@ -93,6 +113,7 @@ async def getRouteDetails(request: getStationsDTO):
                         index += 1
                         content = {
                             "message": responseENUMS.SUCCESS.value,
+                            "fare":fare,
                             "fromStation": fromStation,
                             "toStation": toStation,
                             "route": route
@@ -249,7 +270,8 @@ async def getRouteDetails(request: getStationsDTO):
                     content = {
                         "message": responseENUMS.SUCCESS.value,
                         "fromStation": fromStation,
-                        "toStation": toStation
+                        "toStation": toStation,
+                        "fare":fare,
 
                     }
 
@@ -274,9 +296,10 @@ async def getRouteDetails(request: getStationsDTO):
             return JSONResponse(status_code=200, content={"message": responseENUMS.NO_DATA.value})
 
     except Exception as e:
+        raise e
         return JSONResponse(
-            status_code=400,
+            status_code=500,
             content={
-                "message":e
+                "message":responseENUMS.INTERNAL_ERROR.value
             }
         )

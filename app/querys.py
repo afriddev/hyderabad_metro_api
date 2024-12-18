@@ -26,4 +26,47 @@ WHERE(
     AND ("stationDetails"->>'lineNo') != :fromLineNo AND ("stationDetails"->>'lineNo') != :toLineNo
 )
 LIMIT 2
-)""" 
+)"""
+
+insert_line_details_query = """
+                INSERT INTO public.\"trainRoutes\" ("lineNo", "fromStation", "toStation", "noOfStations", "stationsDetails", "createdAt", "lastUpdatedAt")
+                VALUES(:lineNo, :fromStation, :toStation, :noOfStations, :stationsDetails, :createdAt, :lastUpdatedAt);
+        """
+
+create_trainroutes_table_routes = """
+        CREATE TABLE public.\"trainRoutes\"(
+            id SERIAL PRIMARY KEY,
+            "lineNo" INTEGER NOT NULL,
+            "fromStation" JSONB,
+            "toStation" JSONB,
+            "noOfStations" INTEGER,
+            "stationsDetails" JSONB,
+            "createdAt" VARCHAR(200),
+            "lastUpdatedAt" VARCHAR(200)
+        );
+        """
+
+create_trainfares_table_routes = """
+        CREATE TABLE public.\"trainFares\"(
+            id SERIAL PRIMARY KEY,
+            "stationName" VARCHAR(100),
+            "fares" JSONB,
+            "createdAt" VARCHAR(200),
+            "lastUpdatedAt" VARCHAR(200)
+        );
+        """
+insert_fare_details_query = """ INSERT INTO public."trainFares" ("stationName","fares", "createdAt", "lastUpdatedAt")
+VALUES(:stationName,:fares,:createdAt, :lastUpdatedAt);
+"""
+
+
+get_station_fares_query = """ SELECT "id","stationName","fares"
+FROM public."trainFares"; """
+
+
+get_stations_in_line_query = """
+    SELECT "stationDetails"
+    FROM public."trainRoutes", jsonb_array_elements("stationsDetails") AS "stationDetails"
+    WHERE "lineNo" = :lineNo 
+    AND "stationDetails"->>'stationNo' = :stationNo;
+"""

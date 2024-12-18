@@ -2,8 +2,9 @@ from fastapi import APIRouter
 from app.connectDB import database
 import json
 from fastapi.responses import JSONResponse
-from app.dtos.getTrainStationsDTO import getByLineDTO,getByStationNameDTO
+from app.dtos.getDetailsDTO import getByLineDTO, getByStationNameDTO
 from app.enums.responseEnums import responseENUMS
+from app.querys import all_station_details_query, get_stations_in_line_query
 
 router = APIRouter()
 
@@ -30,25 +31,18 @@ async def getAllTrainRouteDetails():
     except Exception as e:
         print(e)
         return JSONResponse(
-            status_code=200, content={"message":e}
+            status_code=200, content={"message": e}
         )
 
 
-@router.post("/getByLineNo")
+@router.post("/getbylineno")
 async def getDetailsByLine(request: getByLineDTO):
     try:
 
         if request.stationNo is not None:
 
-            query = """
-    SELECT "stationDetails"
-    FROM public."trainRoutes", jsonb_array_elements("stationsDetails") AS "stationDetails"
-    WHERE "lineNo" = :lineNo 
-    AND "stationDetails"->>'stationNo' = :stationNo;
-"""
-
             result = await database.fetch_one(
-                query,
+                get_stations_in_line_query,
                 values={"lineNo": request.lineNo,
                         "stationNo": str(request.stationNo)},
             )
@@ -102,49 +96,45 @@ async def getDetailsByLine(request: getByLineDTO):
     except Exception as e:
         print(f"Error: {e}")
         return JSONResponse(
-            status_code=400, content={"message": responseENUMS.INTERNAL_ERROR.value}
+            status_code=500,
+            content={
+                "message": responseENUMS.INTERNAL_ERROR.value
+            }
         )
 
 
-@router.post("/getByStationName")
-async def getStationDetailsByName(request: getByStationNameDTO):
+@router.get("/allstations")
+async def getAllStations():
+
     try:
-        query = """
-        SELECT "stationDetails"
-        FROM public."trainRoutes",
-             jsonb_array_elements("stationsDetails") AS "stationDetails",
-             jsonb_array_elements_text("stationDetails"->'stationName') AS "Lang" WHERE LOWER("Lang") ILIKE LOWER(:stationName)
-        """
+        allStationResult = await database.fetch_all(f"""{all_station_details_query} SELECT "stationDetails"  FROM stationDetails """)
 
-        station_name_with_wildcards = f"%{request.stationName}%"
-        values = {"stationName": station_name_with_wildcards}
+        parsed_result = []
+        for record in allStationResult:
+            parsed_result.append(json.loads(record["stationDetails"]))
 
-        if request.stationNo != None:
-            query += """ AND ("stationDetails"->>'stationNo' = :stationNo)"""
-            values["stationNo"] = str(request.stationNo)
+        unique_stations = {}
+        for station in parsed_result:
+            key = station["stationName"][0]
+            if key not in unique_stations:
+                station.pop("createdAt", None)
+                station.pop("lastUpdatedAt", None)
+                unique_stations[key] = station
 
-        result = await database.fetch_all(
-            query,
-            values,
+        unique_stations_list = list(unique_stations.values())
+
+        return JSONResponse(
+            status_code=200,
+            content={
+                "message": responseENUMS.SUCCESS.value,
+                "data": unique_stations_list
+            }
         )
-        if result:
-
-            result_dict = []
-            for row in result:
-                row_dict = dict(row)
-                row_dict["stationDetails"] = json.loads(
-                    row_dict["stationDetails"])
-                result_dict.append(row_dict)
-
-            return JSONResponse(status_code=200, content={"data": result_dict})
-        else:
-            return JSONResponse(
-                status_code=200, content={"data": responseENUMS.NO_DATA.value}
-            )
 
     except Exception as e:
-        print(f"Error: {e}")
         return JSONResponse(
-            status_code=400, content={"message": responseENUMS.INTERNAL_ERROR.value}
+            status_code=500,
+            content={
+                "message": responseENUMS.INTERNAL_ERROR.value
+            }
         )
-
