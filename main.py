@@ -51,4 +51,11 @@ def handleHomeRoute():
         status_code=200, content={"message": "Server Running...", "version": "1.0.1"}
     )
 
+@app.get("/health")
+def helthCheckUp():
+    return JSONResponse(
+        status_code=200, content={"message": "Good"}
+    )
+
+
 
