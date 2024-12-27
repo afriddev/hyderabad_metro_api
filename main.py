@@ -8,6 +8,7 @@ from app.routes.getDetails import router as getDetails
 from app.middleWare import Custom404Middleware
 from app.enums.responseEnums import responseENUMS
 from app.routes.getRoute import router as getTrainRoute
+from fastapi.middleware.cors import CORSMiddleware
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
@@ -18,6 +19,14 @@ async def lifespan(app: FastAPI):
     print("Database disconnected!")
 
 app = FastAPI(lifespan=lifespan)
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 @app.exception_handler(RequestValidationError)
 async def validation_exception_handler(request: Request, exc: RequestValidationError):
