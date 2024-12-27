@@ -1,6 +1,9 @@
 from databases import Database
+from dotenv import load_dotenv
+import os
 
+load_dotenv()
 
-DATABASE_URL = "postgresql://neondb_owner:7Eazfni3Uomg@ep-winter-sound-a5vrl30y.us-east-2.aws.neon.tech/neondb?sslmode=require"
+DATABASE_URL = os.getenv("DATABASE_URL")
 database = Database(
     DATABASE_URL)
