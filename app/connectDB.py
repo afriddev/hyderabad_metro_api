@@ -1,6 +1,6 @@
 from databases import Database
 
 
-DATABASE_URL = "postgresql://Hyderabadmetroapi_owner:kNfA7vU5nQET@ep-raspy-boat-a5oy6fav.us-east-2.aws.neon.tech/Hyderabadmetroapi?sslmode=require"
+DATABASE_URL = "postgres://neondb_owner:7Eazfni3Uomg@ep-winter-sound-a5vrl30y-pooler.us-east-2.aws.neon.tech/neondb?sslmode=require"
 database = Database(
     DATABASE_URL)
