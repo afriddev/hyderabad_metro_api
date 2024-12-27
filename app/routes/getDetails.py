@@ -30,6 +30,9 @@ async def getAllTrainRouteDetails():
         )
     except Exception as e:
         print(e)
+        
+        print("hello")
+
         return JSONResponse(
             status_code=200, content={"message": e}
         )
