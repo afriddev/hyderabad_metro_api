@@ -13,8 +13,8 @@ COPY . /app
 # Install dependencies
 RUN pip install --no-cache-dir -r requirements.txt
 
-# Expose the port that the FastAPI app will run on
+# Expose port 8000 to be accessible outside the container
 EXPOSE 8000
 
-# Keep the container alive using tail (you can use a health check in your app)
-CMD ["tail", "-f", "/dev/null"]
+# Run Uvicorn in the background, then keep the container alive using tail
+CMD uvicorn main:app --host 0.0.0.0 --port 8000 & tail -f /dev/null
