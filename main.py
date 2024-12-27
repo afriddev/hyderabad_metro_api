@@ -10,25 +10,15 @@ from app.enums.responseEnums import responseENUMS
 from app.routes.getRoute import router as getTrainRoute
 from fastapi.middleware.cors import CORSMiddleware
 
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    await database.connect()
+    print("Database connected!")
+    yield
+    await database.disconnect()
+    print("Database disconnected!")
 
-
-
-
-
-app = FastAPI()
-
-@app.on_event("startup")
-async def startup() -> None:
-    database_ = app.state.database
-    if not database_.is_connected:
-        await database_.connect()
-
-
-@app.on_event("shutdown")
-async def shutdown() -> None:
-    database_ = app.state.database
-    if database_.is_connected:
-        await database_.disconnect()
+app = FastAPI(lifespan=lifespan)
 
 app.add_middleware(
     CORSMiddleware,
