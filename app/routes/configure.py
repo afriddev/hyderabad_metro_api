@@ -6,12 +6,28 @@ from app.enums.responseEnums import responseENUMS
 from app.utils.appUtils import get_current_datetime
 import json
 from app.querys import insert_line_details_query, create_trainroutes_table_routes, create_trainfares_table_routes, insert_fare_details_query
+from app.connectDB import SECRET_KEY
 
 router = APIRouter()
 
 
 @router.post("/addlinedetails")
 async def addNewLine(trainRouteDetails: addTrainRoute):
+    if(trainRouteDetails.key != SECRET_KEY):
+        return JSONResponse(
+            status_code=401,
+                content={
+                    "message": responseENUMS.API_KEY_ERROR.value
+                }
+    
+        )
+    
+  
+
+    
+    
+
+
     checkTableExistsQuery = "SELECT to_regclass('public.\"trainRoutes\"');"
     checkTableExists = await database.fetch_val(checkTableExistsQuery)
 
@@ -59,6 +75,14 @@ async def addNewLine(trainRouteDetails: addTrainRoute):
 
 @router.post("/addfaredetails")
 async def addFareDetails(request: addFareDTO):
+    if(request['key'] != SECRET_KEY):
+        return JSONResponse(
+            status_code=401,
+                content={
+                    "message": responseENUMS.API_KEY_ERROR.value
+                }
+    
+        )
     checkTableExistsQuery = "SELECT to_regclass('public.\"trainFares\"');"
     checkTableExists = None
 

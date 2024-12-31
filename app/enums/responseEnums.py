@@ -6,3 +6,4 @@ class responseENUMS(Enum):
     ERROR = "ERROR"
     INVALID_PAYLOAD = "INVALID_PAYLOAD"
     NO_DATA = "NO_DATA"
+    API_KEY_ERROR = "API_KEY_ERROR"

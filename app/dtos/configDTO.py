@@ -10,8 +10,10 @@ class addTrainRoute(BaseModel):
     toStation: list[str]
     noOfStations: int
     stationsDetails: list[StationModel]
+    key:str
 
 class addFareDTO(BaseModel):
     stationFares: Dict[str, List[int]]
+    key:str
     
     
