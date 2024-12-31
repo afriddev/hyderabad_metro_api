@@ -248,10 +248,13 @@ async def getRouteDetails(request: getStationsDTO):
                             interChangeLine2 = interChangeLine2[::-1]
 
                         interChangeLine2 = interChangeLine2[1:len(
-                            interChangeLine2)-1]
+                            interChangeLine2)]
+
 
                         if (toStation["stationName"][0] != toInterChange2[len(toInterChange2)-1]["stationName"][0]):
                             toInterChange2 = toInterChange2[::-1]
+                        toInterChange2 = toInterChange2[1:len(toInterChange2)]
+                        
 
                         interChangeRoute2 = fromToInterchange2+interChangeLine2+toInterChange2
 
