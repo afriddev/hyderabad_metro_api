@@ -51,9 +51,9 @@ method = "post"
 ```ts
 const  url = https://hyderabadmetroapi1-gn8j6tzm.b4a.run/api/all
 method = "GET"
-``` 
-⭐ #### Due to free hosting inital latency may be high due to docker container sleep 😴
-⭐ #### To change any station details OR to solve BUG feel free to contact to my Gmail, You need Secret Key 😁
+```
+#### ⭐ Due to free hosting inital latency may be high due to docker container sleep 😴
+#### ⭐ To change any station details OR to solve BUG feel free to contact to my Gmail, You need Secret Key 😁
 
 
 
