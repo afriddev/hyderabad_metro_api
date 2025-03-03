@@ -10,6 +10,7 @@ from app.enums.responseEnums import responseENUMS
 from app.routes.getRoute import router as getTrainRoute
 from fastapi.middleware.cors import CORSMiddleware
 
+
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     await database.connect()
