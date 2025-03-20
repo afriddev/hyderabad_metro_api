@@ -11,8 +11,7 @@ router = APIRouter()
 
 @router.get("/all")
 async def getAllTrainRouteDetails():
-    if not database.is_connected:
-        await database.connect()
+    
     try:
         selectQuery = 'SELECT * FROM public."trainRoutes";'
         result = await database.fetch_all(selectQuery)
@@ -42,8 +41,7 @@ async def getAllTrainRouteDetails():
 
 @router.post("/getbylineno")
 async def getDetailsByLine(request: getByLineDTO):
-    if not database.is_connected:
-        await database.connect()
+    
     try:
 
         if request.stationNo is not None:
@@ -112,8 +110,7 @@ async def getDetailsByLine(request: getByLineDTO):
 
 @router.get("/allstations")
 async def getAllStations():
-    if not database.is_connected:
-        await database.connect()
+    
 
     try:
         allStationResult = await database.fetch_all(f"""{all_station_details_query} SELECT "stationDetails"  FROM stationDetails """)
