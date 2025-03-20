@@ -12,16 +12,8 @@ from fastapi.middleware.cors import CORSMiddleware
 import uvicorn
 
 app = FastAPI()
-
-@app.on_event("startup")
-async def startup():
+if not database.is_connected:
     await database.connect()
-    print("Database connected!")
-
-@app.on_event("shutdown")
-async def shutdown():
-    await database.disconnect()
-    print("Database disconnected!")
 
 app.add_middleware(
     CORSMiddleware,

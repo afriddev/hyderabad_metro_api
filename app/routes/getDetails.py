@@ -108,8 +108,6 @@ async def getDetailsByLine(request: getByLineDTO):
 
 @router.get("/allstations")
 async def getAllStations():
-    if not database.is_connected:
-        await database.connect()
 
     try:
         allStationResult = await database.fetch_all(f"""{all_station_details_query} SELECT "stationDetails"  FROM stationDetails """)
