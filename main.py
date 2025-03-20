@@ -11,16 +11,24 @@ import uvicorn
 
 
 
-@asynccontextmanager
-async def lifespan(app: FastAPI):
-    print("🔄 Connecting to Database...")
-    await database.connect()
-    print("✅ Database Connected!")
-    yield  # Requests will be processed here
-    print("🔄 Disconnecting from Database...")
-    await database.disconnect()
-    print("✅ Database Disconnected!")
-app = FastAPI(lifespan=lifespan)
+
+app = FastAPI()
+# Store the database instance in app.state
+app.state.database = database
+
+@app.on_event("startup")
+async def startup() -> None:
+    database_ = app.state.database
+    if not database_.is_connected:
+        await database_.connect()
+        print("✅ Database Connected!")
+
+@app.on_event("shutdown")
+async def shutdown() -> None:
+    database_ = app.state.database
+    if database_.is_connected:
+        await database_.disconnect()
+        print("✅ Database Disconnected!")
 
 
 # CORS Middleware
