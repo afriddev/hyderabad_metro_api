@@ -12,20 +12,15 @@ from fastapi.middleware.cors import CORSMiddleware
 import uvicorn
 
 
-
-
-app = FastAPI()
-
-@app.on_event("startup")
-async def startup() -> None:
+@asynccontextmanager
+async def lifespan(app: FastAPI):
     await database.connect()
-
-
-@app.on_event("shutdown")
-async def shutdown() -> None:
-    
+    print("Database connected!")
+    yield
     await database.disconnect()
+    print("Database disconnected!")
 
+app = FastAPI(lifespan=lifespan)
 
 app.add_middleware(
     CORSMiddleware,
@@ -64,6 +59,3 @@ def helthCheckUp():
         status_code=200, content={"message": "Good"}
     )
 
-
-if __name__ == "__main__":
-  uvicorn.run("main:app", reload=True)
