@@ -11,6 +11,7 @@ from app.routes.getRoute import router as getTrainRoute
 from fastapi.middleware.cors import CORSMiddleware
 import uvicorn
 
+app = FastAPI(lifespan=lifespan)
 
 @app.on_event("startup")
 async def startup():
@@ -21,8 +22,6 @@ async def startup():
 async def shutdown():
     await database.disconnect()
     print("Database disconnected!")
-
-app = FastAPI(lifespan=lifespan)
 
 app.add_middleware(
     CORSMiddleware,
