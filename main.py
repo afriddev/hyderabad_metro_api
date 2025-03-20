@@ -12,11 +12,13 @@ from fastapi.middleware.cors import CORSMiddleware
 import uvicorn
 
 
-@asynccontextmanager
-async def lifespan(app: FastAPI):
+@app.on_event("startup")
+async def startup():
     await database.connect()
     print("Database connected!")
-    yield
+
+@app.on_event("shutdown")
+async def shutdown():
     await database.disconnect()
     print("Database disconnected!")
 
