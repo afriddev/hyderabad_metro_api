@@ -13,6 +13,8 @@ router = APIRouter()
 
 @router.post("/addlinedetails")
 async def addNewLine(trainRouteDetails: addTrainRoute):
+    if not database.is_connected:
+        await database.connect()
     if(trainRouteDetails.key != SECRET_KEY):
         return JSONResponse(
             status_code=401,
@@ -75,6 +77,8 @@ async def addNewLine(trainRouteDetails: addTrainRoute):
 
 @router.post("/addfaredetails")
 async def addFareDetails(request: addFareDTO):
+    if not database.is_connected:
+        await database.connect()
     if(request['key'] != SECRET_KEY):
         return JSONResponse(
             status_code=401,

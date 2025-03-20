@@ -12,8 +12,7 @@ from fastapi.middleware.cors import CORSMiddleware
 import uvicorn
 
 app = FastAPI()
-if not database.is_connected:
-    await database.connect()
+
 
 app.add_middleware(
     CORSMiddleware,
