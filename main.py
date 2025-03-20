@@ -9,6 +9,7 @@ from app.middleWare import Custom404Middleware
 from app.enums.responseEnums import responseENUMS
 from app.routes.getRoute import router as getTrainRoute
 from fastapi.middleware.cors import CORSMiddleware
+import uvicorn
 
 
 @asynccontextmanager
@@ -58,7 +59,8 @@ def helthCheckUp():
         status_code=200, content={"message": "Good"}
     )
 
+async def connect():
+    await database.connect()
 if __name__ == "__main__":
+  connect()
   uvicorn.run("main:app", reload=True)
-
-
