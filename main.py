@@ -1,6 +1,4 @@
-from fastapi import FastAPI, Request
-from fastapi.responses import JSONResponse
-from fastapi.exceptions import RequestValidationError
+from fastapi import FastAPI
 from contextlib import asynccontextmanager
 from app.connectDB import database
 from app.routes.configure import router as config
@@ -11,9 +9,21 @@ from app.routes.getRoute import router as getTrainRoute
 from fastapi.middleware.cors import CORSMiddleware
 import uvicorn
 
-app = FastAPI()
 
 
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    print("🔄 Connecting to Database...")
+    await database.connect()
+    print("✅ Database Connected!")
+    yield  # Requests will be processed here
+    print("🔄 Disconnecting from Database...")
+    await database.disconnect()
+    print("✅ Database Disconnected!")
+app = FastAPI(lifespan=lifespan)
+
+
+# CORS Middleware
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],
@@ -22,32 +32,21 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-@app.exception_handler(RequestValidationError)
-async def validation_exception_handler(request: Request, exc: RequestValidationError):
-    return JSONResponse(
-        status_code=401,
-        content={
-            "message": responseENUMS.INVALID_PAYLOAD.value,
-        },
-    )
-
-
+# Custom Middleware
 app.add_middleware(Custom404Middleware)
 
+# Routers
 app.include_router(config, prefix="/api/config")
 app.include_router(getDetails, prefix="/api")
 app.include_router(getTrainRoute, prefix="/api/route")
 
-
 @app.get("/")
 def handleHomeRoute():
-    return JSONResponse(
-        status_code=200, content={"message": "Server Running...", "version": "1.0.1"}
-    )
+    return {"message": "Server Running...", "version": "1.0.1"}
 
 @app.get("/health")
-def helthCheckUp():
-    return JSONResponse(
-        status_code=200, content={"message": "Good"}
-    )
+def healthCheckUp():
+    return {"message": "Good"}
 
+if __name__ == "__main__":
+    uvicorn.run("main:app", host="0.0.0.0", port=8000, reload=True)
