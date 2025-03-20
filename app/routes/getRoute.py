@@ -304,6 +304,6 @@ async def getRouteDetails(request: getStationsDTO):
         return JSONResponse(
             status_code=500,
             content={
-                "message":e
+                "message":responseENUMS.INTERNAL_ERROR.value
             }
         )
