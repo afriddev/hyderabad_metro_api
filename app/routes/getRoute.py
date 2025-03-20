@@ -18,8 +18,6 @@ toStation = None
 
 @router.post("/stations")
 async def getRouteDetails(request: getStationsDTO):
-    if not database.is_connected:
-        await database.connect()
     global fromStation
     global toStation
 
