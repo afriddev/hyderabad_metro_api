@@ -135,9 +135,11 @@ async def getAllStations():
         )
 
     except Exception as e:
+        print(e)
+        # responseENUMS.INTERNAL_ERROR.value
         return JSONResponse(
             status_code=500,
             content={
-                "message": responseENUMS.INTERNAL_ERROR.value
+                "message":e
             }
         )
