@@ -11,7 +11,7 @@ from app.routes.getRoute import router as getTrainRoute
 from fastapi.middleware.cors import CORSMiddleware
 import uvicorn
 
-app = FastAPI(lifespan=lifespan)
+app = FastAPI()
 
 @app.on_event("startup")
 async def startup():
