@@ -50,7 +50,7 @@ app.include_router(getTrainRoute, prefix="/api/route")
 @app.get("/")
 def handleHomeRoute():
     return JSONResponse(
-        status_code=200, content={"message": "Server Running...", "version": "1.0.1"}
+        status_code=200, content={"message": "running", "version": "1.0.1"}
     )
 
 @app.get("/health")
@@ -58,3 +58,6 @@ def helthCheckUp():
     return JSONResponse(
         status_code=200, content={"message": "Good"}
     )
+
+if __name__ == "__main__":
+  uvicorn.run("main:app", reload=True)
